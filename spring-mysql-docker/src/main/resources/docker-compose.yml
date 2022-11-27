@@ -1,0 +1,35 @@
+# Instead of network , we can use link as well for the direct connection
+version: '3'
+services:
+  spring-mysql-docker:
+    image: spring-mysql-docker.jar:latest
+    ports:
+      - 8081:8081
+    networks:
+      - spring_mysql_network
+    depends_on:
+      - mysql-standalone
+    environment:
+      SPRING_APPLICATION_JSON: '{
+      "spring.datasource.url" : "jdbc:mysql://mysql-standalone:3306/db",
+      "spring.datasource.username" : "sa",
+      "spring.datasource.password" : "password",
+      "spring.datasource.driver-class-name" : "com.mysql.cj.jdbc.Driver",
+      "spring.jpa.show-sql" : "true",
+      "spring.jpa.hibernate.ddl-auto" : "update"
+      }'
+
+  mysql-standalone:
+    image: mysql:latest
+    ports:
+      - 3307:3306
+    networks:
+      - spring_mysql_network
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=sa
+      - MYSQL_PASSWORD=password
+      
+networks:
+  spring_mysql_network: 
